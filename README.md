@@ -71,8 +71,8 @@ Reference:
 
 ## Launch the worker nodes
 
-1. Once the cluster is active, launch the worker nodes from [this](https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-02-11/amazon-eks-nodegroup.yaml) CloudFormation template, following the guidelines in the AWS tutorial.
-2. The node image id for EKS AMI in Ireland is `ami-098fb7e9b507904e7`.
+1. Once the cluster is active, launch the worker nodes from this CloudFormation template: `https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-02-11/amazon-eks-nodegroup.yaml`, following the guidelines in the AWS tutorial.
+2. The node image id for EKS AMI in Ireland is `ami-098fb7e9b507904e7`
 3. For the worker node subnets, all private subnets should be selected.
 
 Pricing for the EC2 instances follows [regular EC2 pricing](https://aws.amazon.com/ec2/pricing/on-demand/),

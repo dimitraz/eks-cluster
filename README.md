@@ -8,6 +8,7 @@ Provisioning an EKS cluster for my final year project.
 - [Create the VPC and subnets](#create-the-vpc-and-subnets)
 - [Create the cluster](#create-the-cluster)
 - [Launch the worker nodes](#launch-the-worker-nodes)
+- [Deploy an nginx app](#deploy-an-nginx-app)
 - [Launch the dashboard](#launch-the-dashboard)
 
 ## EKS Architecture
@@ -167,6 +168,8 @@ NAME         TYPE           CLUSTER-IP      EXTERNAL-IP                       PO
 kubernetes   ClusterIP      172.20.0.1      <none>                            443/TCP        4h
 nginx        LoadBalancer   172.20.184.91   xxx.eu-west-1.elb.amazonaws.com   80:31395/TCP   4s
 ```
+
+Visiting the `EXTERNAL-IP` address should display the nginx web page (this might take a few minutes).
 
 ## Launch the dashboard
 

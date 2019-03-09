@@ -2,11 +2,14 @@
 
 Provisioning an EKS cluster for my final year project.
 
-# EKS Architecture
+## EKS Architecture
 
 <img src="./images/diagram.png">
 
-# FYP Architecture
+- 3 Public subnets
+- 3 Private subnets (which host the Kubernetes worker nodes)
+
+## FYP Architecture
 
 - Strimzi deployment
   - 3 Kafka replicas

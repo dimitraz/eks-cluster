@@ -74,6 +74,24 @@ Reference:
 1. Once the cluster is active, launch the worker nodes from this CloudFormation template: `https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-02-11/amazon-eks-nodegroup.yaml`, following the guidelines in the AWS tutorial.
 2. The node image id for EKS AMI in Ireland is `ami-098fb7e9b507904e7`
 3. For the worker node subnets, all private subnets should be selected.
+4. Once the stack is complete, click on output, note the node instance role arn and create the following file:
+
+```yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-auth
+  namespace: kube-system
+data:
+  mapRoles: |
+    - rolearn: <Node instance role arn>
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+        - system:bootstrappers
+        - system:nodes
+```
+
+5. Run `kubectl apply -f aws-auth-cm.yaml` followed by `kubectl get nodes --watch` to watch the status of the nodes.
 
 Pricing for the EC2 instances follows [regular EC2 pricing](https://aws.amazon.com/ec2/pricing/on-demand/),
 however the number of pods that can be deployed is restricted by the types of instances selected. I have around 30 pods, so I chose `t2.small` or `t2.medium` instances according to the amount of worker nodes I needed and the price of the instances.
@@ -83,6 +101,72 @@ The list with the amount of pods per instance can be found [here](https://github
 Reference:
 
 - https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html#eks-launch-workers
+
+## Deploy an nginx app
+
+1. Create a simple nginx deployment.
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.9.1
+          ports:
+            - containerPort: 80
+```
+
+Then run the following commands:
+
+```sh
+# Create the deployment
+kubectl apply -f nginx.yml
+
+# Watch the status of the pods
+kubectl get pods -w
+```
+
+2. Expose the deployment through a load balancing service:
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+  selector:
+    app: nginx
+  type: LoadBalancer
+```
+
+After creating the service (`kubectl apply -f svc.yml`), AWS exposes the deployment for you by creating an Elastic Load Balancer endpoint:
+
+```sh
+kubectl get svc
+
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP                       PORT(S)        AGE
+kubernetes   ClusterIP      172.20.0.1      <none>                            443/TCP        4h
+nginx        LoadBalancer   172.20.184.91   xxx.eu-west-1.elb.amazonaws.com   80:31395/TCP   4s
+```
 
 ## Launch the dashboard
 

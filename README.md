@@ -2,6 +2,21 @@
 
 Provisioning an EKS cluster for my final year project.
 
+# EKS Architecture
+
+<img src="./images/diagram.png">
+
+# FYP Architecture
+
+- Strimzi deployment
+  - 3 Kafka replicas
+  - 3 Zookeeper replicas
+  - Cluster operator
+  - Entity operator
+- Kubeless deployment
+  - Kubeless manager operator
+- Kubernetes dashboard
+
 ### Running pods
 
 ```
